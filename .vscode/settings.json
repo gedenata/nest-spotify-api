@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["nestjs", "resave"]
+  "cSpell.words": [
+    "gedenata",
+    "nestjs",
+    "ormconfig",
+    "resave",
+    "spotifydb",
+    "typeorm"
+  ]
 }
