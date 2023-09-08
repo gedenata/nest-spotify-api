@@ -15,9 +15,16 @@ import { User } from './user/user.entity';
 import { UserController } from './user/user.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { BadTokenFilter } from './common/filters/bad-token.filter';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -40,6 +47,10 @@ import { BadTokenFilter } from './common/filters/bad-token.filter';
     {
       provide: APP_FILTER,
       useClass: BadTokenFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ThrottlerGuard,
     },
     AppService,
     AuthService,

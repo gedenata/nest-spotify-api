@@ -1,5 +1,6 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   Req,
   UnauthorizedException,
@@ -8,6 +9,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { Request } from 'express';
+import { SkipThrottle } from '@nestjs/throttler';
 
 // Create a custom interface to extend the Request type
 interface AuthenticatedRequest extends Request {
@@ -23,6 +25,7 @@ export class UserController {
 
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
+  @SkipThrottle()
   async getProfile(@Req() req: AuthenticatedRequest) {
     try {
       // Access the user's token from the request
@@ -41,6 +44,19 @@ export class UserController {
           },
         };
       }
+
+      // Handle ForbiddenException
+      if (error instanceof ForbiddenException) {
+        // Customize the 403 Forbidden response
+        return {
+          error: {
+            status: 403,
+            message: 'Forbidden',
+          },
+        };
+      }
+
+      // NOTE: Customize the 429 Too Many Requests response already handled in @nestjs/throttler.
       // Handle other exceptions or re-throw them if necessary
       throw error;
     }
