@@ -5,7 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
-import { UserProfileDto } from './dto/user-profile.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
+import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
 
 @Injectable()
 export class UserService {
@@ -14,9 +15,9 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getCurrentUserProfile(): Promise<UserProfileDto> {
+  async getCurrentUserProfile(): Promise<CurrentUserProfileResponseDto> {
     try {
-      const userProfile: UserProfileDto = {
+      const currentUserProfileResponse: CurrentUserProfileResponseDto = {
         country: 'US',
         display_name: 'John Doe',
         email: 'johndoe@example.com',
@@ -44,7 +45,61 @@ export class UserService {
         type: 'user',
         uri: 'spotify:user:johndoe',
       };
-      return userProfile;
+      return currentUserProfileResponse;
+    } catch (error) {
+      // Handle errors here
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === HttpStatus.UNAUTHORIZED) {
+          // Unauthorized error (e.g., token expired)
+          throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+        } else if (status === HttpStatus.FORBIDDEN) {
+          // Forbidden error (e.g., insufficient permissions)
+          throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+        } else if (status === HttpStatus.TOO_MANY_REQUESTS) {
+          // Rate limiting error
+          throw new HttpException(
+            'Too Many Requests',
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
+        } else {
+          // Handle other errors (customize as needed)
+          throw new HttpException(data, status);
+        }
+      } else {
+        // Handle network errors or unexpected issues
+        throw new HttpException(
+          'Internal Server Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async getUserProfile(): Promise<UserProfileResponseDto> {
+    try {
+      const userProfileResponse: UserProfileResponseDto = {
+        display_name: 'John Doe',
+        external_urls: {
+          spotify: 'https://open.spotify.com/user/johndoe',
+        },
+        followers: {
+          href: null,
+          total: 42,
+        },
+        href: 'https://api.spotify.com/v1/users/johndoe',
+        id: 'johndoe',
+        images: [
+          {
+            url: 'https://example.com/image.jpg',
+            height: 300,
+            width: 300,
+          },
+        ],
+        type: 'user',
+        uri: 'spotify:user:johndoe',
+      };
+      return userProfileResponse;
     } catch (error) {
       // Handle errors here
       if (error.response) {

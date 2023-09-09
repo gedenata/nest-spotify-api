@@ -13,7 +13,8 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
-import { UserProfileDto } from './dto/user-profile.dto';
+import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
+import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 
 @Controller('v1/me')
 export class UserController {
@@ -22,9 +23,31 @@ export class UserController {
   @Get()
   @UseGuards(AuthGuard('jwt'))
   @SkipThrottle()
-  async getCurrentUserProfile(): Promise<UserProfileDto> {
+  async getCurrentUserProfile(): Promise<CurrentUserProfileResponseDto> {
     try {
       return await this.userService.getCurrentUserProfile();
+    } catch (error) {
+      // Handle UnauthorizedException
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  async getUserProfile(): Promise<UserProfileResponseDto> {
+    try {
+      return await this.userService.getUserProfile();
     } catch (error) {
       // Handle UnauthorizedException
       if (error.response) {

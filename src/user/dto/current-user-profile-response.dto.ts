@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ExternalUrlsDto } from './external-urls.dto';
 import { ImageObjectDto } from './image-object.dto';
 
-export class UserProfileDto {
+export class CurrentUserProfileResponseDto {
   @ApiProperty({
     description:
       "The country of the user, as set in the user's account profile. An ISO 3166-1 alpha-2 country code",
@@ -12,12 +12,14 @@ export class UserProfileDto {
   @ApiProperty({
     description:
       "The name displayed on the user's profile. Null if not available",
+    nullable: true,
   })
   display_name: string | null;
 
   @ApiProperty({
     description:
       "The user's email address, as entered by the user when creating their account. This email address is unverified",
+    nullable: true,
   })
   email: string | null;
 
@@ -81,9 +83,12 @@ export class ExplicitContentDto {
   filter_locked: boolean;
 }
 
-class FollowersDto {
-  @ApiProperty({ description: 'A link to the Web API endpoint for this user' })
-  href: string;
+export class FollowersDto {
+  @ApiProperty({
+    description: 'A link to the Web API endpoint for this user',
+    nullable: true,
+  })
+  href: string | null;
 
   @ApiProperty({ description: 'The total number of followers' })
   total: number;
