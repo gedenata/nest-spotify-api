@@ -14,7 +14,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getUserProfile(): Promise<UserProfileDto> {
+  async getCurrentUserProfile(): Promise<UserProfileDto> {
     try {
       const userProfile: UserProfileDto = {
         country: 'US',

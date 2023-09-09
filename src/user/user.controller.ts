@@ -22,9 +22,9 @@ export class UserController {
   @Get()
   @UseGuards(AuthGuard('jwt'))
   @SkipThrottle()
-  async getUserProfile(): Promise<UserProfileDto> {
+  async getCurrentUserProfile(): Promise<UserProfileDto> {
     try {
-      return await this.userService.getUserProfile();
+      return await this.userService.getCurrentUserProfile();
     } catch (error) {
       // Handle UnauthorizedException
       if (error.response) {
@@ -53,7 +53,7 @@ export class UserController {
       // Access the user's token from the request
       const accessToken = (req.user as { accessToken: string }).accessToken;
 
-      // Create a GetUserTopItemsRequestDto with default values or values you need
+      // Create a GetUserTopItemsRequestDto with default values
       const dto = new GetUserTopItemsRequestDto();
 
       // Fetch the user's top items using the user service
