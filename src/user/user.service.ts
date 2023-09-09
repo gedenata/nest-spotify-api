@@ -1,29 +1,50 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { SpotifyService } from 'src/spotify/spotify.service';
 import { UserRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
+import { UserProfileDto } from './dto/user-profile.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly spotifyService: SpotifyService,
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getUserProfile(accessToken: string) {
+  async getUserProfile(): Promise<UserProfileDto> {
     try {
-      // Use the Spotify service to fetch the user's profile
-      return await this.spotifyService.getCurrentUserProfile(accessToken);
+      const userProfile: UserProfileDto = {
+        country: 'US',
+        display_name: 'John Doe',
+        email: 'johndoe@example.com',
+        explicit_content: {
+          filter_enabled: false,
+          filter_locked: false,
+        },
+        external_urls: {
+          spotify: 'https://open.spotify.com/user/johndoe',
+        },
+        followers: {
+          href: null,
+          total: 42,
+        },
+        href: 'https://api.spotify.com/v1/users/johndoe',
+        id: 'johndoe',
+        images: [
+          {
+            url: 'https://example.com/image.jpg',
+            height: 300,
+            width: 300,
+          },
+        ],
+        product: 'premium',
+        type: 'user',
+        uri: 'spotify:user:johndoe',
+      };
+      return userProfile;
     } catch (error) {
       // Handle errors here
       if (error.response) {
@@ -89,24 +110,6 @@ export class UserService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
-    }
-  }
-
-  async verifyAccessToken(accessToken: string) {
-    try {
-      // Logic to verify the access token goes here.
-      const user = await this.spotifyService.getCurrentUserProfile(accessToken);
-
-      // If the token is invalid or expired, you can throw an UnauthorizedException.
-      if (!user) {
-        throw new UnauthorizedException('Bad or expired token');
-      }
-
-      // If the token is valid, return the user or perform other actions.
-      return user;
-    } catch (error) {
-      console.error('Error verifying access token:', error);
-      throw new UnauthorizedException('Access token verification failed');
     }
   }
 

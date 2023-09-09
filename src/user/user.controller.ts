@@ -13,29 +13,18 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
+import { UserProfileDto } from './dto/user-profile.dto';
 
-// Create a custom interface to extend the Request type
-interface AuthenticatedRequest extends Request {
-  user: {
-    accessToken: string; // Define the structure of your user object here
-    // Add other user-related properties if needed
-  };
-}
-
-@Controller('user')
+@Controller('v1/me')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('profile')
+  @Get()
   @UseGuards(AuthGuard('jwt'))
   @SkipThrottle()
-  async getProfile(@Req() req: AuthenticatedRequest) {
+  async getUserProfile(): Promise<UserProfileDto> {
     try {
-      // Access the user's token from the request
-      const accessToken = req.user.accessToken;
-
-      // Fetch the user's profile using the user service
-      return await this.userService.getUserProfile(accessToken);
+      return await this.userService.getUserProfile();
     } catch (error) {
       // Handle UnauthorizedException
       if (error.response) {
@@ -58,11 +47,12 @@ export class UserController {
   @Get('top')
   @UseGuards(AuthGuard('jwt'))
   async getUserTopItems(
-    @Req() req: AuthenticatedRequest,
+    @Req() req: Request,
   ): Promise<GetUserTopItemsResponseDto> {
     try {
       // Access the user's token from the request
-      const accessToken = req.user.accessToken;
+      const accessToken = (req.user as { accessToken: string }).accessToken;
+
       // Create a GetUserTopItemsRequestDto with default values or values you need
       const dto = new GetUserTopItemsRequestDto();
 
