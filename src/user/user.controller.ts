@@ -1,15 +1,18 @@
 import {
   Controller,
-  ForbiddenException,
   Get,
+  HttpException,
+  HttpStatus,
   Req,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { Request } from 'express';
 import { SkipThrottle } from '@nestjs/throttler';
+import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
+import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
+import { ErrorResponseDto } from './dto/error-response.dto';
 
 // Create a custom interface to extend the Request type
 interface AuthenticatedRequest extends Request {
@@ -35,30 +38,51 @@ export class UserController {
       return await this.userService.getUserProfile(accessToken);
     } catch (error) {
       // Handle UnauthorizedException
-      if (error instanceof UnauthorizedException) {
-        // Customize the 401 Unauthorized response
-        return {
-          error: {
-            status: 401,
-            message: 'Unauthorized', // Customize the message as needed
-          },
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
         };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
+    }
+  }
 
-      // Handle ForbiddenException
-      if (error instanceof ForbiddenException) {
-        // Customize the 403 Forbidden response
-        return {
-          error: {
-            status: 403,
-            message: 'Forbidden',
-          },
+  @Get('top')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserTopItems(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<GetUserTopItemsResponseDto> {
+    try {
+      // Access the user's token from the request
+      const accessToken = req.user.accessToken;
+      // Create a GetUserTopItemsRequestDto with default values or values you need
+      const dto = new GetUserTopItemsRequestDto();
+
+      // Fetch the user's top items using the user service
+      return this.userService.getUserTopItems(accessToken, dto);
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
         };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
-
-      // NOTE: Customize the 429 Too Many Requests response already handled in @nestjs/throttler.
-      // Handle other exceptions or re-throw them if necessary
-      throw error;
     }
   }
 }
