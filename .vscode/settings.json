@@ -4,9 +4,11 @@
     "isrc",
     "johndoe",
     "nestjs",
+    "opblock",
     "ormconfig",
     "resave",
     "spotifydb",
+    "topbar",
     "typeorm"
   ]
 }
