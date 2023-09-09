@@ -14,19 +14,26 @@ export class OAuthController {
     try {
       // Assume have user or client object based on authentication
       const user = (req.session as CustomSessionData)?.user;
-      if (!user) res.redirect(`${req.query.redirect_uri}?error=access_denied`);
+
+      // Check if 'redirect_uri' exists in the query and is a string
+      const redirectUri = req.query.redirect_uri;
+      if (typeof redirectUri !== 'string') {
+        throw new Error('Invalid or missing redirect_uri');
+      }
+
+      if (!user) {
+        return res.redirect(`${redirectUri}?error=access_denied`);
+      }
 
       // Perform user authorization and generate an authorization code
       const authorizationCode =
         await this.oauthService.generateAuthorizationCode(user);
 
       // Redirect the user back to the client application with the authorization code
-      return res.redirect(
-        `${req.query.redirect_uri}?code=${authorizationCode}`,
-      );
+      return res.redirect(`${redirectUri}?code=${authorizationCode}`);
     } catch (error) {
       // Handle authorization errors
-      return res.redirect(`${req.query.redirect_uri}?error=access_denied`);
+      return res.redirect('/error');
     }
   }
 
