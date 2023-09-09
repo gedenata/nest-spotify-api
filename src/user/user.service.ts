@@ -10,7 +10,7 @@ import { UserRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
-import { ErrorResponseDto } from './dto/error-response.dto';
+import { ErrorResponseDto } from 'shared/dto/error-response.dto';
 
 @Injectable()
 export class UserService {

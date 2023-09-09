@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { SkipThrottle } from '@nestjs/throttler';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
-import { ErrorResponseDto } from './dto/error-response.dto';
+import { ErrorResponseDto } from 'shared/dto/error-response.dto';
 
 // Create a custom interface to extend the Request type
 interface AuthenticatedRequest extends Request {
