@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsIn, IsNumber, Min, Max } from 'class-validator';
 
 export class GetUserTopItemsRequestDto {
   @ApiProperty({
@@ -6,6 +7,8 @@ export class GetUserTopItemsRequestDto {
     enum: ['artists', 'tracks'],
     default: 'artists',
   })
+  @IsString()
+  @IsIn(['artists', 'tracks'])
   type: string;
 
   @ApiProperty({
@@ -13,6 +16,8 @@ export class GetUserTopItemsRequestDto {
     enum: ['long_term', 'medium_term', 'short_term'],
     default: 'medium_term',
   })
+  @IsString()
+  @IsIn(['long_term', 'medium_term', 'short_term'])
   time_range: string;
 
   @ApiProperty({
@@ -21,6 +26,9 @@ export class GetUserTopItemsRequestDto {
     maximum: 50,
     default: 20,
   })
+  @IsNumber()
+  @Min(1)
+  @Max(50)
   limit: number;
 
   @ApiProperty({
@@ -28,5 +36,7 @@ export class GetUserTopItemsRequestDto {
     minimum: 0,
     default: 0,
   })
+  @IsNumber()
+  @Min(0)
   offset: number;
 }
