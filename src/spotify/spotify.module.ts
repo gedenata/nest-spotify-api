@@ -3,9 +3,11 @@ import { HttpModule } from '@nestjs/axios';
 import { SpotifyService } from './spotify.service';
 import { SpotifyController } from './spotify.controller';
 import { AuthService } from 'src/auth/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
+import { UserRepositoryModule } from 'src/user/user.repository.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, AuthModule, UserRepositoryModule],
   controllers: [SpotifyController],
   providers: [SpotifyService, AuthService],
 })

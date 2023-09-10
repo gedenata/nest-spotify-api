@@ -1,12 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { UserRepository } from './user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from './user.repository';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
+import { ArtistObjectDto } from './dto/artist-object.dto';
+import { TrackObjectDto } from './dto/track-object.dto';
+import { ExternalUrlsDto } from './dto/external-urls.dto';
+import { RestrictionsDto } from './dto/restrictions.dto';
+import { FollowersDto } from './dto/followers.dto';
+import { ExternalIdsDto } from './dto/external-ids.dto';
 
 @Injectable()
 export class UserService {
@@ -15,8 +20,15 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async getCurrentUserProfile(): Promise<CurrentUserProfileResponseDto> {
+  async getCurrentUserProfile(
+    userId: string,
+  ): Promise<CurrentUserProfileResponseDto> {
     try {
+      const user = await this.userRepository.findUserProfileById(userId);
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
       const currentUserProfileResponse: CurrentUserProfileResponseDto = {
         country: 'US',
         display_name: 'John Doe',
@@ -130,69 +142,114 @@ export class UserService {
     }
   }
 
-  async getUserCountry(userId: number): Promise<string | null> {
-    try {
-      const user = await this.userRepository.findOne({ where: { id: userId } });
-      return user ? user.country : null;
-    } catch (error) {
-      // Handle errors here
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === HttpStatus.UNAUTHORIZED) {
-          // Unauthorized error (e.g., token expired)
-          throw new HttpException(data, HttpStatus.UNAUTHORIZED);
-        } else if (status === HttpStatus.FORBIDDEN) {
-          // Forbidden error (e.g., insufficient permissions)
-          throw new HttpException(data, HttpStatus.FORBIDDEN);
-        } else if (status === HttpStatus.TOO_MANY_REQUESTS) {
-          // Rate limiting error
-          throw new HttpException(data, HttpStatus.TOO_MANY_REQUESTS);
-        } else if (status === HttpStatus.BAD_REQUEST) {
-          // Bad Request error (customize as needed)
-          throw new HttpException(data, HttpStatus.BAD_REQUEST);
-        } else {
-          // Handle other errors (customize as needed)
-          throw new HttpException(data, status);
-        }
-      } else {
-        // Handle network errors or unexpected issues
-        const errorResponse: ErrorResponseDto = {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Internal Server Error',
-        };
-        throw new HttpException(
-          errorResponse,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
-  }
-
   async getUserTopItems(
-    accessToken: string,
+    userId: string,
     dto: GetUserTopItemsRequestDto,
   ): Promise<GetUserTopItemsResponseDto> {
     try {
-      // Validate the type parameter
-      if (dto.type !== 'artists' && dto.type !== 'tracks') {
-        throw new HttpException(
-          'Invalid type parameter',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      const userTopItems = await this.userRepository.getUserTopItems(
+        userId,
+        dto.type,
+        dto.limit,
+      );
 
-      // Construct the endpoint URL based on the specified type, time range, limit, and offset
-      const endpointUrl = `https://api.spotify.com/v1/me/top/${dto.type}?time_range=${dto.time_range}&limit=${dto.limit}&offset=${dto.offset}`;
-
-      // Make a GET request to the Spotify API to fetch the user's top items
-      const response = await axios.get(endpointUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      // Map userTopItems to the expected response DTO format
+      const items: (ArtistObjectDto | TrackObjectDto)[] = userTopItems.map(
+        (item) => {
+          if (dto.type === 'artists') {
+            // Create a new ArtistObjectDto instance
+            const artistDto: ArtistObjectDto = {
+              external_urls: {
+                spotify: '',
+              },
+              followers: {
+                href: '',
+                total: 0,
+              },
+              genres: ['', ''],
+              href: '',
+              id: '',
+              images: [{ url: '', height: 0, width: 0 }],
+              name: '',
+              popularity: 0,
+              type: 'artist',
+              uri: '',
+            };
+            return artistDto;
+          } else if (dto.type === 'tracks') {
+            // Create a new TrackObjectDto instance
+            const trackDto: TrackObjectDto = {
+              album: {
+                album_type: '',
+                total_tracks: 0,
+                available_markets: [],
+                external_urls: new ExternalUrlsDto(),
+                href: '',
+                id: item.id,
+                images: [],
+                name: '',
+                release_date: '',
+                release_date_precision: '',
+                restrictions: new RestrictionsDto(),
+                type: '',
+                uri: '',
+                artists: [],
+              },
+              artist: [
+                {
+                  external_urls: new ExternalUrlsDto(),
+                  followers: new FollowersDto(),
+                  genres: ['', ''],
+                  href: '',
+                  id: item.id,
+                  images: [{ url: '', height: 0, width: 0 }],
+                  name: '',
+                  popularity: 0,
+                  type: 'artist',
+                  uri: '',
+                },
+              ],
+              available_markets: [],
+              disc_number: 0,
+              id: item.id,
+              name: 'Track Name',
+              type: 'track',
+              duration_ms: 0,
+              explicit: false,
+              external_ids: new ExternalIdsDto(),
+              external_urls: new ExternalUrlsDto(),
+              href: '',
+              is_playable: false,
+              linked_from: undefined,
+              restrictions: new RestrictionsDto(),
+              popularity: 0,
+              preview_url: '',
+              track_number: 0,
+              url: '',
+              is_local: false,
+            };
+            return trackDto;
+          } else {
+            // Handle other types or throw an error
+            throw new HttpException(
+              'Invalid type parameter',
+              HttpStatus.BAD_REQUEST,
+            );
+          }
         },
-        // TODO: You can add any query parameters or options as needed
-      });
+      );
 
-      return response.data;
+      // Format the result into the response DTO
+      const response: GetUserTopItemsResponseDto = {
+        href: 'your_href_value',
+        limit: dto.limit,
+        next: 'your_next_value',
+        offset: 0, // Set the appropriate offset value if needed
+        previous: null, // Set the previous value if applicable
+        total: userTopItems.length, // Get the total count of items
+        items,
+      };
+      return response;
     } catch (error) {
       // Handle errors here
       if (error.response) {

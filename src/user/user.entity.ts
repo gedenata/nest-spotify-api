@@ -4,7 +4,7 @@ import { ImageObject } from './image.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column({ length: 2, nullable: true })
   country: string | null;

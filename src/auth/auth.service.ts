@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/user/user.entity';
+import * as jwt from 'jsonwebtoken';
+import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly userRepository: UserRepository) {}
+
   private accessToken: string;
   private tokenExpirationTime: number;
 
@@ -22,5 +27,19 @@ export class AuthService {
       throw new Error('Access token has expired. Please request a new one.');
     }
     return this.accessToken;
+  }
+
+  // Create a JWT token with 'id' in the payload
+  async createJwtToken(userId: string): Promise<string> {
+    const payload = { id: userId };
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    return token;
+  }
+
+  async validateUser(userId: string): Promise<User | null> {
+    // Implement user validation logic here
+    // Example: Fetch the user from a database
+    const user = await this.userRepository.findUserProfileById(userId);
+    return user || null; // Return the user or null if not found
   }
 }
