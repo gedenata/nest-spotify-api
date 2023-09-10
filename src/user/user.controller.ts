@@ -19,7 +19,7 @@ import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import CustomRequest from 'src/auth/interfaces/custom-request.interface';
 
-@Controller('v1/me')
+@Controller('v1')
 @ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
