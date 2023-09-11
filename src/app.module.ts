@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { SpotifyService } from './spotify/spotify.service';
 import { AuthService } from './auth/auth.service';
 import { SpotifyModule } from './spotify/spotify.module';
@@ -44,7 +42,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     AuthModule,
   ],
-  controllers: [AppController, SpotifyAuthController, UserController],
+  controllers: [SpotifyAuthController, UserController],
   providers: [
     {
       provide: APP_FILTER,
@@ -54,7 +52,6 @@ import { AuthModule } from './auth/auth.module';
       provide: APP_FILTER,
       useClass: ThrottlerGuard,
     },
-    AppService,
     AuthService,
     SpotifyService,
     SpotifyAuthService,
