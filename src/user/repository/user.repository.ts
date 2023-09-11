@@ -76,4 +76,23 @@ export class UserRepository extends Repository<UserEntity> {
 
     return user;
   }
+
+  async unfollowPlaylist(userId: string, playlistId: string): Promise<void> {
+    const user = await this.findOne({ where: { id: userId } });
+    if (!user) {
+      return null;
+    }
+
+    if (user.followedPlaylists.includes(playlistId)) {
+      user.followedPlaylists = user.followedPlaylists.filter(
+        (id) => id !== playlistId,
+      );
+
+      try {
+        await this.save(user);
+      } catch (error) {
+        throw error;
+      }
+    }
+  }
 }

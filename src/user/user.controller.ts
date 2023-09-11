@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -149,6 +150,36 @@ export class UserController {
         isPublic,
       );
       return updatedUser;
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Delete('playlists/:playlist_id/followers')
+  @UseGuards(AuthGuard('jwt'))
+  async unfollowPlaylist(
+    @Req() req: any,
+    @Param('playlist_id') playlistId: string,
+  ) {
+    try {
+      const userId = req.user.id;
+      await this.userService.unfollowPlaylist(userId, playlistId);
+      return {
+        message: 'Successfully unfollowed the playlist',
+      };
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;

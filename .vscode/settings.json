@@ -9,6 +9,8 @@
     "resave",
     "spotifydb",
     "topbar",
-    "typeorm"
+    "typeorm",
+    "Unfollow",
+    "Unfollowed"
   ]
 }

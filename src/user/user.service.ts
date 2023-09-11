@@ -334,4 +334,53 @@ export class UserService {
       }
     }
   }
+
+  async unfollowPlaylist(userId: string, playlistId: string): Promise<void> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (user.followedPlaylists.includes(playlistId)) {
+        user.followedPlaylists = user.followedPlaylists.filter(
+          (id) => id !== playlistId,
+        );
+
+        await this.userRepository.save(user);
+      }
+    } catch (error) {
+      // Handle errors here
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === HttpStatus.UNAUTHORIZED) {
+          // Unauthorized error (e.g., token expired)
+          throw new HttpException(data, HttpStatus.UNAUTHORIZED);
+        } else if (status === HttpStatus.FORBIDDEN) {
+          // Forbidden error (e.g., insufficient permissions)
+          throw new HttpException(data, HttpStatus.FORBIDDEN);
+        } else if (status === HttpStatus.TOO_MANY_REQUESTS) {
+          // Rate limiting error
+          throw new HttpException(data, HttpStatus.TOO_MANY_REQUESTS);
+        } else if (status === HttpStatus.BAD_REQUEST) {
+          // Bad Request error (customize as needed)
+          throw new HttpException(data, HttpStatus.BAD_REQUEST);
+        } else {
+          // Handle other errors (customize as needed)
+          throw new HttpException(data, status);
+        }
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 }
