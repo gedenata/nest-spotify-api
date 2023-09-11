@@ -9,9 +9,9 @@ import { SpotifyAuthController } from './spotify/spotify-auth.controller';
 import { SpotifyAuthService } from './spotify/spotify-auth.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserRepository } from './user/user.repository';
+import { UserRepository } from './user/repository/user.repository';
 import { UserService } from './user/user.service';
-import { User } from './user/user.entity';
+import { UserEntity } from './user/entity/user.entity';
 import { UserController } from './user/user.controller';
 import { APP_FILTER } from '@nestjs/core';
 import { BadTokenFilter } from './common/filters/bad-token.filter';
@@ -38,7 +38,7 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       migrationsRun: true,
     }),
-    TypeOrmModule.forFeature([User, UserRepository]),
+    TypeOrmModule.forFeature([UserEntity, UserRepository]),
     HttpModule,
     SpotifyModule,
     UserModule,

@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Param,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -11,12 +13,13 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { SkipThrottle } from '@nestjs/throttler';
+import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { ErrorResponseDto } from 'shared/dto/error-response.dto';
 import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
-import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FollowPlaylistDto } from './dto/follow-playlist.dto';
 import CustomRequest from 'src/auth/interfaces/custom-request.interface';
 
 @Controller('v1')
@@ -112,6 +115,40 @@ export class UserController {
 
       // Fetch the user's top items using the user service
       return this.userService.getUserTopItems(userId, dto);
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        // Handle network errors or unexpected issues
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Put('playlists/:playlist_id/followers')
+  @UseGuards(AuthGuard('jwt'))
+  async followPlaylist(
+    @Req() req: any,
+    @Param('playlist_id') playlistId: string,
+    @Body() followPlaylistDto: FollowPlaylistDto,
+  ) {
+    try {
+      const userId = req.user.id;
+      const isPublic = followPlaylistDto.public || true;
+      const updatedUser = await this.userService.followPlaylist(
+        userId,
+        playlistId,
+        isPublic,
+      );
+      return updatedUser;
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;

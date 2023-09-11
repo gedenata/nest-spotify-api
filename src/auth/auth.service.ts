@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/user/user.entity';
+import { UserEntity } from 'src/user/entity/user.entity';
 import * as jwt from 'jsonwebtoken';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +36,7 @@ export class AuthService {
     return token;
   }
 
-  async validateUser(userId: string): Promise<User | null> {
+  async validateUser(userId: string): Promise<UserEntity | null> {
     // Implement user validation logic here
     // Example: Fetch the user from a database
     const user = await this.userRepository.findUserProfileById(userId);

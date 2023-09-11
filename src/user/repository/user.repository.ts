@@ -1,21 +1,21 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { User } from './user.entity';
+import { UserEntity } from '../entity/user.entity';
 
-@EntityRepository(User)
-export class UserRepository extends Repository<User> {
-  async createUser(userData: Partial<User>): Promise<User> {
+@EntityRepository(UserEntity)
+export class UserRepository extends Repository<UserEntity> {
+  async createUser(userData: Partial<UserEntity>): Promise<UserEntity> {
     const user = this.create(userData);
     return await this.save(user);
   }
 
-  async findUserById(id: string): Promise<User | undefined> {
+  async findUserById(id: string): Promise<UserEntity | undefined> {
     return await this.findOne({ where: { id } });
   }
 
   async updateUser(
     id: string,
-    updateUserDto: Partial<User>,
-  ): Promise<User | undefined> {
+    updateUserDto: Partial<UserEntity>,
+  ): Promise<UserEntity | undefined> {
     await this.update(id, updateUserDto);
     return this.findUserById(id);
   }
@@ -24,7 +24,7 @@ export class UserRepository extends Repository<User> {
     await this.delete(id);
   }
 
-  async findUserProfileById(id: string): Promise<User | undefined> {
+  async findUserProfileById(id: string): Promise<UserEntity | undefined> {
     // Assuming that you have a column in your User entity named 'id'
     return await this.findUserById(id);
   }
@@ -33,7 +33,7 @@ export class UserRepository extends Repository<User> {
     userId: string,
     type: string,
     limit: number,
-  ): Promise<User[]> {
+  ): Promise<UserEntity[]> {
     const queryBuilder = this.createQueryBuilder('user')
       .select(['user.id', 'user.display_name', 'user.email'])
       .leftJoinAndSelect('user.images', 'image')
@@ -55,5 +55,25 @@ export class UserRepository extends Repository<User> {
     // Execute the query and return the results
     const users = await queryBuilder.getMany();
     return users;
+  }
+
+  async followPlaylist(
+    userId: string,
+    playlistId: string,
+    isPublic: boolean,
+  ): Promise<UserEntity | null> {
+    const user = await this.findOne({ where: { id: userId } });
+    if (!user) {
+      return null;
+    }
+
+    user.followedPlaylists.push(playlistId);
+
+    if (isPublic) {
+      user.publicFollowedPlaylists.push(playlistId);
+    }
+    await this.save(user);
+
+    return user;
   }
 }
