@@ -17,7 +17,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
-import { ErrorResponseDto } from 'shared/dto/error-response.dto';
+import { ErrorResponseDto } from 'src/shared/dto/error-response.dto';
 import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { FollowPlaylistDto } from './dto/follow-playlist.dto';

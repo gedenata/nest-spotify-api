@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './repository/user.repository';
 import { GetUserTopItemsRequestDto } from './dto/get-user-top-items-request.dto';
 import { GetUserTopItemsResponseDto } from './dto/get-user-top-items-response.dto';
-import { ErrorResponseDto } from 'shared/dto/error-response.dto';
+import { ErrorResponseDto } from 'src/shared/dto/error-response.dto';
 import { UserProfileResponseDto } from './dto/user-profile-response.dto';
 import { CurrentUserProfileResponseDto } from './dto/current-user-profile-response.dto';
 import { ArtistObjectDto } from './dto/artist-object.dto';

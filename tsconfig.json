@@ -16,7 +16,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*.ts", "session.d.ts", "types/**/*.ts", "ormconfig.ts", "shared/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "session.d.ts",
+    "types/**/*.ts",
+    "ormconfig.ts",
+    "src/shared/**/*.ts"
+  ]
 }
