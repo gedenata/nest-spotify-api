@@ -5,12 +5,12 @@ import { UserEntity } from './user.entity';
 @Entity()
 export class ImageObjectEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   @IsString()
   @IsNotEmpty()
-  url: string;
+  url: string | null;
 
   @Column()
   @IsNumber()

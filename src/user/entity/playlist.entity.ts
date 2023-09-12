@@ -16,7 +16,7 @@ export class PlaylistEntity {
   @Column()
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string | null;
 
   @Column({ default: true })
   @IsBoolean()
