@@ -4,9 +4,11 @@ import {
   IsString,
   IsArray,
   IsUrl,
-  IsNumber,
   IsDate,
   IsObject,
+  IsIn,
+  IsInt,
+  Min,
 } from 'class-validator';
 import { RestrictionsDto } from './restrictions.dto';
 import { ExternalUrlsDto } from './external-urls.dto';
@@ -19,13 +21,14 @@ export class AlbumDto {
     enum: ['album', 'single', 'compilation'],
     example: 'compilation',
   })
-  @IsEnum(['album', 'single', 'compilation'])
+  @IsIn(['album', 'single', 'compilation'])
   album_type: string;
 
   @ApiProperty({
     description: 'The number of tracks in the album',
   })
-  @IsNumber()
+  @IsInt()
+  @Min(1)
   total_tracks: number;
 
   @ApiProperty({

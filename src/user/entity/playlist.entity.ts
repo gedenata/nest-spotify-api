@@ -11,7 +11,7 @@ import { UserEntity } from './user.entity';
 @Entity()
 export class PlaylistEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
   @Column()
   @IsString()

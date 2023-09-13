@@ -5,7 +5,7 @@ import { UserEntity } from './user.entity';
 @Entity()
 export class ImageObjectEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
   @Column()
   @IsString()

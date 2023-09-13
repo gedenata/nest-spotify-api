@@ -8,25 +8,25 @@ export class UserRepository extends Repository<UserEntity> {
     return await this.save(user);
   }
 
-  async findUserById(id: number): Promise<UserEntity | undefined> {
-    return await this.findOne({ where: { id } });
+  async findUserById(user_id: string): Promise<UserEntity | undefined> {
+    return await this.findOne({ where: { user_id } });
   }
 
   async updateUser(
-    id: number,
+    user_id: string,
     updateUserDto: Partial<UserEntity>,
   ): Promise<UserEntity | undefined> {
-    await this.update(id, updateUserDto);
-    return this.findUserById(id);
+    await this.update(user_id, updateUserDto);
+    return this.findUserById(user_id);
   }
 
   async deleteUser(id: number): Promise<void> {
     await this.delete(id);
   }
 
-  async findUserProfileById(id: number): Promise<UserEntity | undefined> {
+  async findUserProfileById(user_id: string): Promise<UserEntity | undefined> {
     // Assuming that you have a column in your User entity named 'id'
-    return await this.findUserById(id);
+    return await this.findUserById(user_id);
   }
 
   async getUserTopItems(

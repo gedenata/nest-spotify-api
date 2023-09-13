@@ -20,7 +20,7 @@ import { PlaylistEntity } from './playlist.entity';
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
   @Column({ length: 2, nullable: true })
   @IsOptional()
@@ -49,9 +49,9 @@ export class UserEntity {
   @IsUrl()
   href: string | null;
 
-  @Column({ length: 255 })
+  @Column()
   @IsString()
-  spotifyId: string;
+  user_id: string;
 
   @Column('jsonb', { nullable: true })
   @IsOptional()

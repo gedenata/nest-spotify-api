@@ -1,11 +1,18 @@
-import { IsInt, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ImageObjectEntity } from './image.entity';
 
 @Entity()
 export class ArtistEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id: number;
 
   @Column('jsonb', { nullable: true })
   @IsOptional()
@@ -17,7 +24,8 @@ export class ArtistEntity {
   @IsNumber()
   followers: { href: string | null; total: number } | null;
 
-  @Column()
+  @Column('jsonb', { nullable: true })
+  @IsArray()
   @IsString({ each: true })
   genres: string[];
 
@@ -28,6 +36,10 @@ export class ArtistEntity {
 
   @OneToMany(() => ImageObjectEntity, (image) => image.user, { cascade: true })
   images: ImageObjectEntity[];
+
+  @Column()
+  @IsString()
+  artist_id: string;
 
   @Column()
   @IsString()
