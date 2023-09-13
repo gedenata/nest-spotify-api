@@ -8,12 +8,12 @@ export class UserRepository extends Repository<UserEntity> {
     return await this.save(user);
   }
 
-  async findUserById(id: string): Promise<UserEntity | undefined> {
+  async findUserById(id: number): Promise<UserEntity | undefined> {
     return await this.findOne({ where: { id } });
   }
 
   async updateUser(
-    id: string,
+    id: number,
     updateUserDto: Partial<UserEntity>,
   ): Promise<UserEntity | undefined> {
     await this.update(id, updateUserDto);
@@ -24,7 +24,7 @@ export class UserRepository extends Repository<UserEntity> {
     await this.delete(id);
   }
 
-  async findUserProfileById(id: string): Promise<UserEntity | undefined> {
+  async findUserProfileById(id: number): Promise<UserEntity | undefined> {
     // Assuming that you have a column in your User entity named 'id'
     return await this.findUserById(id);
   }
@@ -40,13 +40,20 @@ export class UserRepository extends Repository<UserEntity> {
       .where('user.id = :userId', { userId })
       .orderBy('your_order_column', 'DESC'); // Specify the column for ordering
 
-    // Add additional conditions based on the 'type' parameter
     if (type === 'artists') {
       // Add conditions for fetching top artists
-      // For example, you can join with related tables and apply filters
+      queryBuilder.innerJoin('user.artists', 'artist'); // Join with artists table
+      // Apply filters specific to fetching top artists
+      queryBuilder.where('artist.popularity > :popularityThreshold', {
+        popularityThreshold: 80,
+      });
     } else if (type === 'tracks') {
       // Add conditions for fetching top tracks
-      // For example, you can join with related tables and apply filters
+      queryBuilder.innerJoin('user.tracks', 'track'); // Join with tracks table
+      // Apply filters specific to fetching top tracks
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      queryBuilder.where('track.release_date > :oneYearAgo', { oneYearAgo });
     }
 
     // Limit the result to the specified 'limit'
@@ -58,7 +65,7 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async followPlaylist(
-    userId: string,
+    userId: number,
     playlistId: string,
     isPublic: boolean,
   ): Promise<UserEntity | null> {
@@ -75,24 +82,5 @@ export class UserRepository extends Repository<UserEntity> {
     await this.save(user);
 
     return user;
-  }
-
-  async unfollowPlaylist(userId: string, playlistId: string): Promise<void> {
-    const user = await this.findOne({ where: { id: userId } });
-    if (!user) {
-      return null;
-    }
-
-    if (user.followedPlaylists.includes(playlistId)) {
-      user.followedPlaylists = user.followedPlaylists.filter(
-        (id) => id !== playlistId,
-      );
-
-      try {
-        await this.save(user);
-      } catch (error) {
-        throw error;
-      }
-    }
   }
 }
