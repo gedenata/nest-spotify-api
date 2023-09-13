@@ -193,7 +193,7 @@ export class UserService {
                 available_markets: [],
                 external_urls: new ExternalUrlsDto(),
                 href: '',
-                id: item.id,
+                id: item.user_id,
                 images: [],
                 name: '',
                 release_date: '',
@@ -209,7 +209,7 @@ export class UserService {
                   followers: new FollowersDto(),
                   genres: ['', ''],
                   href: '',
-                  id: item.id,
+                  id: item.user_id,
                   images: [{ url: '', height: 0, width: 0 }],
                   name: '',
                   popularity: 0,
@@ -219,7 +219,7 @@ export class UserService {
               ],
               available_markets: [],
               disc_number: 0,
-              id: item.id,
+              id: item.user_id,
               name: 'Track Name',
               type: 'track',
               duration_ms: 0,
@@ -292,7 +292,7 @@ export class UserService {
     }
   }
 
-  async followPlaylist(userId: string, playlistId: string, isPublic: boolean) {
+  async followPlaylist(userId: number, playlistId: string, isPublic: boolean) {
     try {
       const updatedUser = await this.userRepository.followPlaylist(
         userId,
@@ -335,7 +335,7 @@ export class UserService {
     }
   }
 
-  async unfollowPlaylist(userId: string, playlistId: string): Promise<void> {
+  async unfollowPlaylist(userId: number, playlistId: string): Promise<void> {
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
 
