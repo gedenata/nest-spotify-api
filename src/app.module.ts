@@ -15,6 +15,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { BadTokenFilter } from './common/filters/bad-token.filter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { AlbumModule } from './album/album.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
     SpotifyModule,
     UserModule,
     AuthModule,
+    AlbumModule,
   ],
   controllers: [SpotifyAuthController, UserController],
   providers: [
