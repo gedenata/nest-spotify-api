@@ -1,6 +1,14 @@
-import { Controller, Delete, Get, Put } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Put,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AudiobookService } from './audiobook.service';
+import { ErrorResponseDto } from 'src/shared/dto/error-response.dto';
 
 @Controller('v1')
 @ApiTags('Audiobooks')
@@ -8,23 +16,142 @@ export class AudiobookController {
   constructor(private readonly audiobookService: AudiobookService) {}
 
   @Get('audiobooks/:id')
-  async getAudiobook() {}
+  async getAudiobook() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Get('audiobooks')
-  async getSeveralAudiobooks() {}
+  async getSeveralAudiobooks() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Get('audiobooks/:id/chapters')
-  async getAudiobookChapters() {}
+  async getAudiobookChapters() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Get('me/audiobooks')
-  async getUserSavedAudiobooks() {}
+  async getUserSavedAudiobooks() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Put('me/audiobooks')
-  async saveAudiobooksForCurrentUser() {}
+  async saveAudiobooksForCurrentUser() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Delete('me/audiobooks')
-  async removeUserSavedAudiobooks() {}
+  async removeUserSavedAudiobooks() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 
   @Get('me/audiobooks/contains')
-  async checkUserSavedAudiobooks() {}
+  async checkUserSavedAudiobooks() {
+    try {
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+        throw new HttpException(data, status);
+      } else {
+        const errorResponse: ErrorResponseDto = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Internal Server Error',
+        };
+        throw new HttpException(
+          errorResponse,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
 }
