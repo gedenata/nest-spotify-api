@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { GenreService } from './genre.service';
 
-@Controller('genre')
-export class GenreController {}
+@Controller('v1')
+@ApiTags('Genres')
+export class GenreController {
+  constructor(private readonly genreService: GenreService) {}
+
+  @Get('/recommendations/available-genre-seeds')
+  async getAvailableGenreSeeds() {}
+}

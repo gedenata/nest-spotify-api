@@ -4,6 +4,6 @@ import { AudiobookService } from './audiobook.service';
 
 @Module({
   controllers: [AudiobookController],
-  providers: [AudiobookService]
+  providers: [AudiobookService],
 })
 export class AudiobookModule {}

@@ -140,4 +140,18 @@ export class AlbumService {
       }
     }
   }
+
+  async getSeveralAlbums() {}
+
+  async getAlbumTracks() {}
+
+  async getUserSavedAlbums() {}
+
+  async saveAlbumsForCurrentUser() {}
+
+  async removeUserSavedAlbums() {}
+
+  async checkUserSavedAlbums() {}
+
+  async getNewReleases() {}
 }

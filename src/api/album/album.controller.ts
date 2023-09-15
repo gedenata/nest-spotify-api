@@ -1,9 +1,11 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
+  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AlbumService } from './album.service';
@@ -11,7 +13,7 @@ import { GetAlbumResponseDto } from './dto/get-album-response.dto';
 import { ErrorResponseDto } from 'src/shared/dto/error-response.dto';
 
 @Controller('v1')
-@ApiTags('Album')
+@ApiTags('Albums')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
@@ -41,4 +43,25 @@ export class AlbumController {
       }
     }
   }
+
+  @Get('albums')
+  async getSeveralAlbums() {}
+
+  @Get('albums/:id/tracks')
+  async getAlbumTracks() {}
+
+  @Get('me/albums')
+  async getUserSavedAlbums() {}
+
+  @Put('me/albums')
+  async saveAlbumsForCurrentUser() {}
+
+  @Delete('me/albums')
+  async removeUserSavedAlbums() {}
+
+  @Get('me/albums/contains')
+  async checkUserSavedAlbums() {}
+
+  @Get('browse/new-releases')
+  async getNewReleases() {}
 }

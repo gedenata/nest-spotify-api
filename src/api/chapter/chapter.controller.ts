@@ -1,4 +1,15 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ChapterService } from './chapter.service';
 
-@Controller('chapter')
-export class ChapterController {}
+@Controller('v1')
+@ApiTags('Chapters')
+export class ChapterController {
+  constructor(private readonly chapterService: ChapterService) {}
+
+  @Get('chapters/:id')
+  async getChapter() {}
+
+  @Get('chapters')
+  async getSeveralChapters() {}
+}

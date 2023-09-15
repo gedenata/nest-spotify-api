@@ -24,7 +24,7 @@ import { FollowPlaylistDto } from './dto/follow-playlist.dto';
 import CustomRequest from 'src/auth/interfaces/custom-request.interface';
 
 @Controller('v1')
-@ApiTags('User')
+@ApiTags('Users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

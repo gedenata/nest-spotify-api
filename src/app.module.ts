@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { SpotifyService } from './spotify/spotify.service';
 import { AuthService } from './auth/auth.service';
-import { SpotifyModule } from './spotify/spotify.module';
-import { SpotifyAuthController } from './spotify/spotify-auth.controller';
-import { SpotifyAuthService } from './spotify/spotify-auth.service';
 import { UserModule } from './api/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from './api/user/repository/user.repository';
@@ -36,6 +32,24 @@ import { SearchController } from './api/search/search.controller';
 import { SearchService } from './api/search/search.service';
 import { SearchModule } from './api/search/search.module';
 import { TrackModule } from './api/track/track.module';
+import { CategoryController } from './api/category/category.controller';
+import { ShowModule } from './api/show/show.module';
+import { ShowController } from './api/show/show.controller';
+import { ShowService } from './api/show/show.service';
+import { ChapterService } from './api/chapter/chapter.service';
+import { AudiobookService } from './api/audiobook/audiobook.service';
+import { AudiobookController } from './api/audiobook/audiobook.controller';
+import { EpisodeService } from './api/episode/episode.service';
+import { MarketService } from './api/market/market.service';
+import { PlaylistService } from './api/playlist/playlist.service';
+import { TrackService } from './api/track/track.service';
+import { AlbumService } from './api/album/album.service';
+import { AlbumController } from './api/album/album.controller';
+import { TrackController } from './api/track/track.controller';
+import { PlaylistController } from './api/playlist/playlist.controller';
+import { MarketController } from './api/market/market.controller';
+import { EpisodeController } from './api/episode/episode.controller';
+import { EpisodeModule } from './api/episode/episode.module';
 
 @Module({
   imports: [
@@ -59,31 +73,40 @@ import { TrackModule } from './api/track/track.module';
     }),
     TypeOrmModule.forFeature([UserEntity, UserRepository]),
     HttpModule,
-    SpotifyModule,
-    UserModule,
     AuthModule,
     AlbumModule,
     ArtistModule,
     AudiobookModule,
     CategoryModule,
     ChapterModule,
+    EpisodeModule,
     GenreModule,
     MarketModule,
     PlayerModule,
     PlaylistModule,
     SearchModule,
+    ShowModule,
     TrackModule,
+    UserModule,
   ],
   controllers: [
-    SpotifyAuthController,
-    UserController,
+    AlbumController,
     ArtistController,
+    AudiobookController,
+    CategoryController,
     ChapterController,
+    EpisodeController,
     GenreController,
+    MarketController,
     PlayerController,
+    PlaylistController,
     SearchController,
+    ShowController,
+    TrackController,
+    UserController,
   ],
   providers: [
+    UserRepository,
     {
       provide: APP_FILTER,
       useClass: BadTokenFilter,
@@ -93,15 +116,20 @@ import { TrackModule } from './api/track/track.module';
       useClass: ThrottlerGuard,
     },
     AuthService,
-    SpotifyService,
-    SpotifyAuthService,
-    UserService,
-    UserRepository,
+    AlbumService,
     ArtistService,
+    AudiobookService,
     CategoryService,
+    ChapterService,
+    EpisodeService,
     GenreService,
+    MarketService,
     PlayerService,
+    PlaylistService,
     SearchService,
+    ShowService,
+    TrackService,
+    UserService,
   ],
 })
 export class AppModule {}
