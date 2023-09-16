@@ -1,0 +1,70 @@
+Standardization
+
+# Property have both 'Required' and 'Nullable' :
+
+Example:
+- height
+`integer`
+`Required`
+`Nullable`
+`The image height in pixels.`
+`Example value: "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228"`
+
+Implementation:
+- DTO
+export class ImageDto {
+    @ApiProperty({
+        description: 'The image height in pixels.',
+        example: 300,
+    })
+    @IsNotEmpty()
+    @IsOptional()
+    @IsInt()
+    height?: number;
+}
+- Entity
+@Entity()
+export class ImageEntity {
+    @ApiProperty({
+        description: 'The image height in pixels.',
+        example: 300,
+    })
+    @IsNotEmpty()
+    @IsOptional()
+    @IsInt()
+    @Column({ nullable: true })
+    height: number | null;
+}
+
+# Property only have 'Required' :
+
+Example:
+- height
+`integer`
+`Required`
+`The image height in pixels.`
+`Example value: "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228"`
+
+Implementation:
+- DTO
+export class ImageDto {
+    @ApiProperty({
+        description: 'The image height in pixels.',
+        example: 300,
+    })
+    @IsNotEmpty()
+    @IsInt()
+    height: number;
+}
+- Entity
+@Entity()
+export class ImageEntity {
+    @ApiProperty({
+        description: 'The image height in pixels.',
+        example: 300,
+    })
+    @Column()
+    @IsNotEmpty()
+    @IsInt()
+    height: number;
+}
