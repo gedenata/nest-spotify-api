@@ -1,9 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, IntersectionType } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
   IsInt,
-  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -12,11 +11,16 @@ import { ExternalUrlsDto } from './external-urls.dto';
 import { LinkedFromDto } from './linked-from.dto';
 import { RestrictionsDto } from './restrictions.dto';
 
-export class ItemsSimplifiedTrackObjectDto {
-  @ApiProperty()
-  @IsArray()
-  @IsObject()
-  artists: SimplifiedArtistObjectDto[];
+export class ItemsSimplifiedTrackObjectDto extends IntersectionType(
+  SimplifiedArtistObjectDto,
+  ExternalUrlsDto,
+  LinkedFromDto,
+  RestrictionsDto,
+) {
+  //   @ApiProperty()
+  //   @IsArray()
+  //   @IsObject()
+  //   artists: SimplifiedArtistObjectDto[];
 
   @ApiProperty()
   @IsArray()
@@ -35,9 +39,9 @@ export class ItemsSimplifiedTrackObjectDto {
   @IsBoolean()
   explicit: boolean;
 
-  @ApiProperty()
-  @IsObject()
-  external_urls: ExternalUrlsDto;
+  //   @ApiProperty()
+  //   @IsObject()
+  //   external_urls: ExternalUrlsDto;
 
   @ApiProperty()
   @IsString()
@@ -51,13 +55,13 @@ export class ItemsSimplifiedTrackObjectDto {
   @IsBoolean()
   is_playable: boolean;
 
-  @ApiProperty()
-  @IsObject()
-  linked_from: LinkedFromDto;
+  //   @ApiProperty()
+  //   @IsObject()
+  //   linked_from: LinkedFromDto;
 
-  @ApiProperty()
-  @IsObject()
-  restrictions: RestrictionsDto;
+  //   @ApiProperty()
+  //   @IsObject()
+  //   restrictions: RestrictionsDto;
 
   @ApiProperty()
   @IsString()
